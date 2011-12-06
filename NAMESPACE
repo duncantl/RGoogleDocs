@@ -1,0 +1,38 @@
+import(RCurl)
+import(XML)
+
+export(getGoogleDocsConnection, getGoogleAuth)
+export(comments, images, footnotes, sections, readDoc)
+export(getDocs, getDocContent)
+export(uploadDoc, deleteDoc)
+exportMethods(uploadDoc, deleteDoc)
+#export(getDocEntryByName)
+# readSheetRef, getCells
+
+export(getWorksheets, sheetAsMatrix)
+export(addWorksheet, removeDoc)
+
+export(getExtent)
+
+export(DocTypeExtensions)
+
+exportMethods(dim, '[', '[<-', '[[<-')
+
+exportClass("GoogleWorksheetRef")
+exportClass("GoogleDocument")
+
+export(addSpreadsheet)
+
+export(listFolder, searchDocs, addFolder)
+# updateDoc omitted for now.
+
+export(getAccess, setAccess, removeAccess) # addWriter,
+
+export(moveToFolder)
+
+export(rename)
+exportMethods(rename)
+
+export(publicWorksheet)
+
+S3method("[", "GoogleDocList")

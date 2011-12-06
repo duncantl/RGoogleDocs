@@ -1,0 +1,6 @@
+.*Rcheck.*
+.*autom4te.cache.*
+config.log
+config.status
+folder.rda
+.*.Rprof

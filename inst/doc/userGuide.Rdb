@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<article xmlns:r="http://www.r-project.org"
+         xmlns:xi="http://www.w3.org/2003/XInclude">
+
+<articleinfo>
+
+<title>RGoogleDocs</title>
+
+<author><firstname>Duncan</firstname><surname>Temple Lang</surname>
+  <affiliation><orgname>University of California at Davis</orgname>
+               <orgdiv>Department of Statistics</orgdiv>
+  </affiliation>
+</author>
+</articleinfo>
+
+<section>
+<title>Getting Started</title>
+
+<para>
+We will assume that you have a Google Docs account and that you have
+created some spreadsheets and/or word processing documents in that account.
+</para>
+<para>
+Instead of typing your login and password each time you connect
+to Google Docs or leaving it visible in scripts you run,
+you can set your Google Docs login name and password as an R option
+named GooglePassword. This is set as
+
+<r:code>
+options(GooglePassword = c('login id' = 'password')
+</r:code>
+You can also specify the login-password pair as an environment variable
+<sh:env>GOOGLE_DOCS_PASSWORD</sh:env> in the form
+ login=password.
+
+</para>
+<para>
+You can connect to the word processing documents or the
+spreadsheet documents.
+</para>
+</section>
+<section>
+<title>Listing the Available Documents</title>
+</section>
+</article>

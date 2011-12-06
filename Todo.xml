@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../../../../Projects/org/omegahat/Docs/XSL/Todo.xsl" ?> 
+
+<topics xmlns:r="http://www.r-project.org">
+<title>RGoogleDocs</title>
+
+<items>
+<title>General</title>
+
+<item topic="documents">
+Add support for querying different types of documents and starred docs, etc.
+</item>
+<item status="done">
+Also for querying the contents of a document, i.e. the q parameter.
+</item>
+
+<item>
+Perhaps provide a more hierarchical interface for folders,
+e.g. creating them with A/B/C and interpreting this as
+a path, not a simple name.
+</item>
+
+<item status="done">
+Increased support for folders.
+<br/>
+Can list them with listFolder()
+<br/>
+Move things to a folder.
+</item>
+
+<item>
+meta data. See update.R
+setMetaData.
+If we want to use $&lt;- and [&lt;-,
+then we need the connection in the GoogleDocumentDescription object.
+</item>
+  
+
+
+<item>
+Publishing the document.
+Access/permission.
+<br/>
+<r:func>setWriter</r:func>
+</item>
+
+<item topic="test" status="done">
+Check addWorksheet() is working.
+Need to give the name.
+</item>
+
+<item topic="fix" status="done">
+Check x[, 5] = letters[1:8].
+This uses the extent and that may be a little 
+suprising, i.e. not using the dim().
+</item>
+
+<item topic="worksheets">
+In processCells(), compute the rows and columns to
+drop by looking at the cells.
+</item>
+
+<item topic="worksheets">
+Add columns/rows to the worksheet when 
+we assign to non-existent columns or rows.
+</item>
+
+<item topic="worksheets">
+Add colClasses to sheetAsMatrix.
+</item>
+
+<item topic="worksheets">
+Insertion of R objects such as matrices, model summaries,
+even plots into a worksheet with appropriate formatting.
+</item>
+
+<item topic="worksheets">
+How do we read or set styles on one or more cells.
+</item>
+
+<item topic="general" status="low">
+Insert representations of R objects into word processing documents,
+i.e. HTML.
+</item>
+
+<item  topic="general" status="low">
+Allow use and manipulation  of styles from R in word processing
+documents, and also in Excel worksheets.
+</item>
+
+<item topic="sheets" status="done">
+<r:code>
+library(RGoogleDocs)
+auth = getGoogleAuth("dtemplelang@gmail.com", "RabbitHead", "wise")
+sheets.con = getGoogleDocsConnection(auth = auth)
+sheets = getSheets("mine3", sheets.con)
+as(sheets$Bob, "data.frame") #XXX
+</r:code>
+Handled empty sheet with no entry nodes in the cells feed document.
+</item>
+
+</items>
+</topics>

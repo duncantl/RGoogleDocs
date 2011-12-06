@@ -1,0 +1,540 @@
+<?xml version="1.0"?>
+<article xmlns:r="http://www.r-project.org">
+<title>An simple R interface to Google Documents</title>
+<para>
+This illustrates how to use the code that we put together 
+quite rapidly to communicate with the  Google Documents
+manager.  It uses the XML and RCurl packages and illustrates
+that it is relatively quick and easy to use their primitives to interact
+with Web services.
+</para>
+<para>
+The first thing to do is login using <r:func>getGoogleAuth</r:func>.
+You specify your login name for Google, e.g. dtemplelang@gmail.com,
+and your password for that account.
+<r:code>
+auth = getGoogleAuth("dtemplelang@gmail.com", getOption('GoogleDocsPassword'))
+</r:code>
+We can put this "permanently" into a Curl handle so that we don't
+need to specify it in all the calls with
+<r:code>
+con = getGoogleDocsConnection(auth)
+</r:code>
+We now just pass <r:var>con</r:var> as the value for the
+<r:arg>curl</r:arg> parameter in calls to the other functions.
+In the future, we might provide an interface that avoids this such
+as
+<r:code eval="false">
+ con$getDocs()
+ names(con)
+</r:code>
+and where the <r:var>con</r:var> value is implicitly provided.
+</para>
+<note>
+<para>
+We do have to specify auth when calling <r:func>uploadDoc</r:func>.
+</para>
+</note>
+<para>
+Having logged in, we can find out about the existing documents.
+<r:code>
+docs = getDocs(con)
+</r:code>
+This is a list of R descriptions from the XML contents.
+<r:code>
+names(docs)
+<r:output>
+[1] "my foo1"                                         
+[2] "my foo1"                                         
+[3] "my foo1"                                         
+[4] "my foo"                                          
+[5] "another bob"                                     
+[6] "\"~/foo.csv\""                                   
+[7] "SampleDoc"                                       
+[8] "Copy of This is a sample document that we are..."
+[9] "bob"                                             
+</r:output>
+</r:code>
+<r:code>
+names(docs[[1]])
+<r:output>
+ [1] "id"         "published"  "updated"    "category"   "title"     
+ [6] "content"    "alternate"  "self"       "edit"       "edit-media"
+[11] "author"     "feedLink"  
+</r:output>
+</r:code>
+<r:code>
+docs[[1]]
+<r:output><![CDATA[
+$id
+[1] "http://docs.google.com/feeds/documents/private/full/document%3Adfwhmfk3_6c26hc6gr"
+
+$published
+[1] "2008-09-24 14:02:56 PDT"
+
+$updated
+[1] "2008-09-24 14:02:56 PDT"
+
+$category
+                                        scheme 
+       "http://schemas.google.com/g/2005#kind" 
+                                          term 
+"http://schemas.google.com/docs/2007#document" 
+                                         label 
+                                    "document" 
+
+$title
+[1] "my foo1"
+
+$content
+                                                                                                                                                 type 
+                                                                                                                                          "text/html" 
+                                                                                                                                                  src 
+"http://docs.google.com/feeds/download/documents/RawDocContents?action=fetch&justBody=false&revision=_latest&editMode=false&docID=dfwhmfk3_6c26hc6gr" 
+
+$alternate
+                                               rel 
+                                       "alternate" 
+                                              type 
+                                       "text/html" 
+                                              href 
+"http://docs.google.com/Doc?id=dfwhmfk3_6c26hc6gr" 
+
+$self
+                                                                                rel 
+                                                                             "self" 
+                                                                               type 
+                                                             "application/atom+xml" 
+                                                                               href 
+"http://docs.google.com/feeds/documents/private/full/document%3Adfwhmfk3_6c26hc6gr" 
+
+$edit
+                                                                                         rel 
+                                                                                      "edit" 
+                                                                                        type 
+                                                                      "application/atom+xml" 
+                                                                                        href 
+"http://docs.google.com/feeds/documents/private/full/document%3Adfwhmfk3_6c26hc6gr/fli10bmo" 
+
+$`edit-media`
+                                                                                     rel 
+                                                                            "edit-media" 
+                                                                                    type 
+                                                                             "text/html" 
+                                                                                    href 
+"http://docs.google.com/feeds/media/private/full/document%3Adfwhmfk3_6c26hc6gr/fli10bmo" 
+
+$author
+dtemplelang@gmail.com 
+        "dtemplelang" 
+
+$feedLink
+                                                                          rel 
+                       "http://schemas.google.com/acl/2007#accessControlList" 
+                                                                         href 
+"http://docs.google.com/feeds/acl/private/full/document%3Adfwhmfk3_6c26hc6gr" 
+
+attr(,"class")
+[1] "GoogleDocument"
+]]></r:output>
+</r:code>
+</para>
+<para>
+We can turn these into a data frame with
+<r:code>
+as(docs, "data.frame")
+</r:code>
+</para>
+<para>
+We can fetch a document with 
+<r:code>
+getDocContent(docs[["SampleDoc"]], con)
+</r:code>
+or directly by the name of the document
+<r:code>
+getDocContent("SampleDoc", con)
+</r:code>
+</para>
+<para>
+We can remove a document with
+<r:code>
+deleteDoc("my foo1", con)
+</r:code>
+or
+<r:code>
+deleteDoc(docs[[1]], con)
+</r:code>
+You can check what files remain with
+<r:code>
+names(getDocs(con))
+</r:code>
+</para>
+<para>
+Finally, to upload a file from your system to your Google Documents account, 
+we use <r:func>uploadDoc</r:func>.
+For this function, you currently have specify a value for the <r:arg>auth</r:arg>
+parameter. This is the value returned by <r:func>getGoogleAuth</r:func> earlier
+on.
+</para>
+<para>
+<r:func>uploadDoc</r:func> you can supply a file name or the actual
+content to upload.
+If the value of <r:arg>content</r:arg> matches a file name,
+then we read the contents of that  file and upload that string.
+If this is a binary file, you should read the contents yourself
+and pass those as the value for <r:arg>content</r:arg>.
+</para>
+<para>
+We try to determine the type of document (e.g. a spreadsheet, a Word
+document, a CSV file) from the extension of the filename (using
+<r:func>findType</r:func> and matching the extension - MIME type table
+from Google's documentation).  If the extension doesn't match or if
+you are specifying the content directly, you should specify a vale for
+the <r:arg>type</r:arg> parameter.  This can either be the MIME type
+(or an initial part thereof), e.g "text/html" or "text/tab", or you
+can provide the corresponding extension, e.g. "htm" or "tab".
+</para>
+<para>
+The <r:arg>name</r:arg> parameter allows you to specify a name to be
+used as the title of the document in the Google Documents manager panel.
+</para>
+<para>
+Note that Google cannot convert all types of documents and
+does not necessarily even handle "rich" CSV files.
+</para>
+<para>
+So let's upload a CSV file with the contents
+<programlisting>
+1, 2, 3
+4, 5, 6
+</programlisting>
+We'll first upload the contents directly
+<r:code>
+x = "1, 2, 3\n4, 5, 6\n"
+uploadDoc(x, auth, name = "direct csv", type = "csv")
+</r:code>
+If we put the contents in the file /tmp/foo.csv,
+then we can upload this as 
+<r:code>
+uploadDoc("/tmp/foo.csv", auth)
+</r:code>
+Here <r:func>uploadDoc</r:func> can infer the MIME type and the 
+name from the local file name.
+</para>
+<para>
+Binary files are slightly more complex.
+<r:code>
+f = system.file("sampleDocs", "SampleDoc.doc", package = "RGoogleDocs")
+uploadDoc(f, auth, type = "doc", binary = TRUE)
+</r:code>
+To upload a spreadsheet
+<r:code>
+f = system.file("sampleDocs", "SampleSpreadsheet.xls", package = "RGoogleDocs")
+uploadDoc(f, auth, name = basename(f), binary = TRUE)
+</r:code>
+When <r:arg>binary</r:arg> is <r:true/>,
+the <r:func>uploadDoc</r:func> function
+calls <r:func>readBinary</r:func> which
+amounts to calling
+<r:expr>readBin(f, "raw", 22016)</r:expr>
+as it determines the number of bytes in the file for us.
+You can work with raw content yourself directly and upload that.
+This is like uploading the contents as text when there is 
+no associated file but the content was generated from a previous call.
+For example, let's read the binary file ourselves:
+<r:code>
+vec = readBinary(f)
+class(vec)
+</r:code>
+Then we can upload it, but again we have to specify the 
+type and any name we want.
+<r:code>
+uploadDoc(vec, auth, type = "xls")
+</r:code>
+</para>
+<para>
+You can also upload material to a specific folder.
+We do this by specifying the identity of the folder
+via <r:func>uploadDoc</r:func>'s  <r:arg>folder</r:arg> parameter.
+This should be a <r:class>GoogleFolder</r:class> object
+retrieved from, for example, a call to <r:func>getDocs</r:func>
+or <r:func>listFolder</r:func>.
+We get the list of "documents"
+<r:code>
+  docs = getDocs(con)
+</r:code>
+and then can upload a file to say "MyFolder" using
+<r:code>
+  uploadDoc(x, con, name = "boo", type = "csv", folder = docs$MyFolder)
+</r:code>
+A more convenient version of this is
+<r:code>
+  f[["boo1", type = 'csv']] = x
+</r:code>
+where we "assign" the value to a name within the folder as if it were a list.
+Note that we can specify the type and other arguments that are passed
+on to <r:func>uploadDoc</r:func>.
+Also note that the connection object is obtained from the folder object.
+</para>
+<para>
+We can also specify the folder by name, e.g.,
+<r:code>
+  uploadDoc(x, con, name = "boo2", type = "csv", folder = "MyFolder")
+</r:code>
+But be aware that this involves an implicit call to <r:func>getDocs</r:func>
+and so involves an extra "trip to the server".
+</para>
+<para>
+Finally, if you happen to know the "internal" identity of the folder,
+i.e. is /feeds/folders/.../ URL, you can specify this.
+But note that it must be "escaped" using the <r:func>I</r:func>
+function, e.g.,
+<r:code>
+  uploadDoc(x, con, name = "boo3", type = "csv", folder = I(docs$MyFolder@content["src"]))
+</r:code>
+</para>
+<section>
+<title>Tools for working with word processing documents</title>
+<para>
+The word processing documents are just HTML documents.  So we can use
+<r:func>htmlParse</r:func> (or <r:func>htmlTreeParse</r:func>) and the
+XPath to find what we want.  We can get the content or find the nodes
+of interest and modify them and then upload the resulting document.
+We have provided some simple functions for accessing elements of a
+word processing document.  These are <r:func>comments</r:func>,
+<r:func>images</r:func>, <r:func>footnotes</r:func> and
+<r:func>sections</r:func>.  Each of these takes either the name of a
+document and a connection (returned from
+<r:func>getConnection</r:func>) or the parsed HTML document.
+For example, we can call each of these as either:
+<r:code>
+comments("Many Parts", con)
+doc = htmlParse(getDocContent("Many Parts", con), asText = TRUE, error = function(...) {})
+comments(doc)
+sections(doc)
+</r:code>
+The latter approach avoids retrieving the document and parsing it multiple
+times.
+</para>
+<para>
+<r:func>comments</r:func> returns a data frame with a row
+for each comment and columns giving
+the text of the comment, the date the comment was last
+modified ( or created?) and the name of the author of the comment.
+</para>
+<para>
+<r:func>sections</r:func> returns a character vector giving the
+title of the different sections. The names of the elements
+of this vector are numbers giving the level of the section.
+This is taken from the h1, h2, h3, ..., h6 elements in the HTML document.
+</para>
+<para>
+The <r:func>footnotes</r:func> function returns
+a character vector giving the text of the footnotes.
+The names are the unique identifiers within the document of these elements.
+</para>
+<para>
+<r:func>images</r:func> returns the names of the image files referenced
+within the document.  Note  that these are not the original names of the
+image files, but the names as they are stored within the Google documents repository.
+</para>
+</section>
+
+
+<section>
+<title>Spreadsheets</title>
+<para>
+We have added basic functions for working with spreadsheets.
+We create a connection for working with spreadsheets rather than word processing
+documents. We do this by specifying the service as "wise" rather than
+the default "writely".
+<r:code>
+  sheets.con = getGoogleDocsConnection(getGoogleAuth("dtemplelang@gmail.com", "...", service = "wise"))
+</r:code>
+When we call <r:func>getDocs</r:func> with this connection, we get back
+information about spreadsheets only.
+<r:code>
+  a = getDocs(sheets.con)
+</r:code>
+The function <r:func>getWorksheets</r:func> is used
+to obtain a list of objects that identify each of the worksheets within
+a spreadsheet.
+<r:code>
+  ts = getWorksheets(a$TwoSheets, sheets.con)
+  names(ts)
+</r:code>
+<r:func>getWorksheets</r:func> is smart enough to  be able to
+work from the name of the spreadsheet, e.g.
+<r:code>
+  ts = getWorksheets("TwoSheets", sheets.con)
+</r:code>
+but it is faster to use the GoogleDocument object returned via
+<r:func>getDocs</r:func> as it avoids an extra request to the
+Google Docs server.
+</para>
+
+<para>
+We can do various things with the spreadsheet and its worksheets.
+We can query the dimensions and/or the contents of the worksheet or a part of it,
+we can modify one or more cells, and we can add a worksheet to a spreadsheet.
+The functions <r:func>dim</r:func>, <r:func>nrow</r:func> and
+<r:func>ncol</r:func> all work.
+These report the "declared" dimensions of the worksheet,
+i.e. how many rows and columns have been allocated.
+This is often way more than are actually used.
+The function <r:func>getExtent</r:func> tells us
+about the rectangular region that is actually in use.
+This returns a 2 x 2 matrix giving the "bounding box"
+of the effective cells in use.
+If there is nothing in the first row and column,
+this would return 2, 2 as the indices of the
+first cell. 
+</para>
+<para>
+We can convert a worksheet to a matrix or data frame using 
+the regular <r:func>as</r:func> function, e.g.
+<r:expr>as(sheet, "matrix")</r:expr>
+or
+<r:expr>as(sheet, "data.frame")</r:expr>.
+The coercion methods are merely calls to
+the function <r:func>sheetAsMatrix</r:func>
+which provides more control of the coercion.
+It allows us to specify how the column names
+are found (e.g. as the first row of the worksheet,
+or given in the call as the value of the <r:arg>header</r:arg> parameter)
+and whether to discard "empty" rows and columns.
+For example, 
+<r:code>
+  sheetAsMatrix(ts$Sheet1, header = TRUE, as.data.frame = TRUE, trim = TRUE)
+</r:code>
+</para>
+<para>
+If we want to access one or more cells, we can convert the entire
+worksheet into a data frame and then use R's regular subsetting.
+However, this is potentially expensive in that we have to download the
+entire worksheet and then process all of the contents.  If the
+worksheet is large and we only want a few values, we are doing a lot
+of extra work.  
+So we have provided methods for the subsetting operator <r:op>[</r:op>
+that do this more efficiently by retrieving and processing only the
+specified cells.
+We can use these on the <r:class>GoogleWorksheetRef</r:class> objects.
+For example, suppose we have our sheet with 
+<r:code>
+con = getGoogleDocsConnection("me", "my password")
+mine4 = getWorksheets("mine4", con)[[1]]
+</r:code>
+then we can get a single cell with
+<r:code>
+mine4[2, 3]
+</r:code>
+We can get multiple cell values, e.g.
+<r:code>
+mine4[1:2, ]
+mine4[, 2:3]
+mine4[1, ]
+mine4[, 3]
+</r:code>
+</para>
+<para>
+We can also assign values to one or more cells.
+Let's start by adding a new worksheet to the spreadsheet mine4:
+<r:code>
+mine4 = getDocs(con)$mine4
+sh = addWorksheet(mine4, con, "test")
+</r:code>
+Now we can populate it
+<r:code>
+sh[1,1] = 2
+sh[2, 1:10] = letters[1:10]
+sh[, 11] = letters[1:5]
+</r:code>
+</para>
+<para>
+When we omit a dimension, the affected cells
+range over the extent
+</para>
+</section>
+<section>
+<title>Adding Documents</title>
+<para>
+We can use <r:func>uploadDoc</r:func> to upload 
+a document or even an R object such as a data frame or matrix
+which will be converted to a spreadsheet via a CSV upload.
+We can use <r:func>addSpreadsheet</r:func> to create a spreadsheet
+document with a single empty worksheet of specified dimensions.
+This is a simple wrapper for <r:func>uploadDoc</r:func>
+Note that when uploading a document using either of these
+functions, you are communicating with the documents API,
+i.e. writely, and you need authentication for that.
+So if you have a connection for the spreadsheets API, you cannot
+use that.
+</para>
+</section>
+<section>
+<title>Managing Documents</title>
+<para>
+We have been focusing on the contents of documents.
+The Google Docs API allows us to manage the collection of documents.
+It provides functionality to upload and delete/remove documents,
+rename documents, create folders and move documents into folders.
+
+
+The function <r:func>addFolder</r:func> allows us to create
+a new folder. This is created at the top-level.
+We can then move it to a different folder.
+The function <r:func>moveToFolder</r:func> does this.
+<r:func>addFolder</r:func> takes one or more  names
+and a connection and creates the folders with these names.
+<r:code>
+f = addFolder(c("foo", "bar"), con)
+</r:code>
+The results are <r:class>GoogleFolder</r:class> objects.
+We can use these as target/destinations  in
+calls to <r:func>moveToFolder</r:func>.
+For example, we can move the folder bar into foo with
+<r:code>
+moveToFolder(f$bar, f$foo)
+</r:code>
+</para>
+<para>
+We can change meta data, such as the title, of the document.
+This is done via the operators <r:op>$*&lt;-</r:op> and <r:op>[&lt;-</r:op>.
+(The accessor methods are not supported.)
+Given a document <r:var>doc</r:var> we set, e.g., the title with
+<r:code>
+doc$title = "new title"
+</r:code>
+We can also use 
+<r:code>
+doc["title"] = "new title"
+</r:code>
+The benefit of the second approach (apart from allowing variables, 
+e.g. <r:expr>var = "title"; doc[ var ] = value</r:expr>)
+is that we can set multiple values in a single call, e.g.
+<r:code>
+doc["title", "author"] = list("new title", c(name = "Bob", email = "bob@bob.com"))
+</r:code>
+</para>
+</section>
+<section>
+<title>Comment</title>
+<para>
+The Google documents and spreadsheets servics are interesting. The
+Web-based nature has several attractive aspects. However, the
+interactive tools are currently quite limited relative to regular
+office applications.  There is little functionality for working richly
+with styles.  The APIs are also reasonably limited.  Furthermore, some
+of the documentation is slightly unclear and even incorrect, e.g. the
+code for some examples do not correspond to what is being discussed in
+the text, the batch editing section talks about POST, but in fact PUT
+works and POST does not appear to.  While developing some of the
+functionality in this package, the Google service claimed it was
+experiencing technical difficulties and was unable to list all my
+documents.
+So I am not ready to trade-in my office tools (not that I use them
+very much anyway!), but the notion of publishing "live" documents is
+appealing.  The IDynDocs package has a different take on "live".
+</para>
+</section>
+</article>

@@ -1,0 +1,52 @@
+<article>
+<title>Given a Public ID</title>
+<section>
+<para>
+The goal  here is to how to go from a
+URL in which we can see a public spreadsheet as
+HTML/JavaScript to being able to treat
+it like one of our own and
+access the worksheets and cells via our RGoogleDocs
+functions.
+</para>
+<para>
+We'll use GapMinder's world application as the source
+of our problem.
+If you view this and then click on the data source, you 
+will end up viewing a URL  in your Web browser and
+it will be something like:
+<programlisting>
+http://spreadsheets.google.com/pub?key=phAwcNAVuyj2tPLxKvvnNPA
+</programlisting>
+So let's take the key and see how we can access the underlying GoogleDoc
+object.
+</para>
+<para>
+We use the key to form the following URL:
+<r:code>
+key = "phAwcNAVuyj2tPLxKvvnNPA"
+u = sprintf("http://spreadsheets.google.com/feeds/worksheets/%s/public/values", key)
+</r:code>
+We can get the content of this URL with
+<r:code>
+zz = getURLContent(u, followlocation = TRUE)
+</r:code>
+Note we don't need any authentication.
+</para>
+<para>
+Now this looks to be something very similar to what we get back from <r:func>getWorksheets</r:func>.
+So we can process it as we do that.
+<r:code>
+doc = xmlParse(zz)
+entries = getNodeSet(doc, "//x:entry", "x")
+length(entries)
+lapply(entries, RGoogleDocs:::readSheetRef, NULL)
+names(ans) = sapply(entries, function(x) xmlValue(x[["title"]]))
+</r:code>
+</para>
+<para>
+So we want a high-level function that takes a key and creates
+a GoogleSpreadsheet object.
+</para>
+</section>
+</article>

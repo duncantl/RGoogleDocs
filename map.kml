@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Folder>
+    <Placemark>
+      <name>Hello</name>
+      <Style />
+      <description>Taken from  Google documentation
+     http://code.google.com/apis/maps/documentation/mapsdata/developers_guide_protocol.html</description>
+      <Point>
+        <coordinates>-11.968312,-77.066395</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>There</name>
+      <Style />
+      <description>Out There Down Under</description>
+      <Point>
+        <coordinates>-38.51512,145.34502</coordinates>
+      </Point>
+    </Placemark>
+  </Folder>
+</kml>

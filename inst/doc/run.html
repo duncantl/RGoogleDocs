@@ -1,0 +1,663 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>An simple R interface to Google Documents</title><link rel="stylesheet" type="text/css" href="/Users/duncan/Classes/StatComputing/XDynDocs/inst/CSS/OmegaTech.css"></link><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"></meta>
+<link xmlns="" rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0r4/build/tabview/assets/skins/sam/tabview.css">
+<script xmlns="" type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script xmlns="" type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/element/element-min.js"></script>
+<script xmlns="" type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/tabview/tabview-min.js"></script>
+<script xmlns="" type="text/javascript" src="/Users/duncan/Classes/StatComputing/XDynDocs/inst/JavaScript/yahooTabUtils.js"></script>
+<script xmlns="" type="text/javascript" src="http://www.omegahat.org/DynDocs/JavaScript/toggleHidden.js"></script>
+</head><body class="yui-skin-sam">
+<script xmlns="" type="text/javascript"><!--
+var toggleCodeIds = [
+ 
+   "id36047840", 
+   "id36242936", 
+   "id36046380", 
+   "id36292733", 
+   "id36292736", 
+   "id36292747", 
+   "id36292754", 
+   "id36292766", 
+   "id36292773", 
+   "id36292776", 
+   "id36292782", 
+   "id36292785", 
+   "id36292789", 
+   "id36292852", 
+   "id36292857", 
+   "id36292868", 
+   "id36292872", 
+   "id36292894", 
+   "id36292898", 
+   "id36292923", 
+   "id36292927", 
+   "id36292931", 
+   "id36292943", 
+   "id36292959", 
+   "id36292999", 
+   "id36293049", 
+   "id36293057", 
+   "id36293064", 
+   "id36293072", 
+   "id36293124", 
+   "id36293143", 
+   "id36293147", 
+   "id36293151", 
+   "id36293159", 
+   "id36293162", 
+   "id36293217", 
+   "id36293228", 
+   "id36293246", 
+   "id36293249", 
+   "id36293257"
+];
+--></script><p xmlns=""></p>
+<div class="article" title="An simple R interface to Google Documents"><div class="titlepage"><div><div><h2 class="title"><a id="id36045955"></a>An simple R interface to Google Documents</h2></div></div><hr></hr></div><p>
+This illustrates how to use the code that we put together 
+quite rapidly to communicate with the  Google Documents
+manager.  It uses the XML and RCurl packages and illustrates
+that it is relatively quick and easy to use their primitives to interact
+with Web services.
+</p><p>
+The first thing to do is login using <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//getGoogleAuth.html">getGoogleAuth()
+  </a></i>.
+You specify your login name for Google, e.g. dtemplelang@gmail.com,
+and your password for that account.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36047840"><div><pre class="rcode" title="R code">
+auth = getGoogleAuth("dtemplelang@gmail.com", getOption('GoogleDocsPassword'))
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+We can put this "permanently" into a Curl handle so that we don't
+need to specify it in all the calls with
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36242936"><div><pre class="rcode" title="R code">
+con = getGoogleDocsConnection(auth)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+We now just pass <b xmlns:rs="http://www.omegahat.org/RS" xmlns:s="http://cm.bell-labs.com/stat/S4" xmlns="" class="$">con</b> as the value for the
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rarg">curl</i> parameter in calls to the other functions.
+In the future, we might provide an interface that avoids this such
+as
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36046380"><div><pre class="rcode" title="R code">
+ con$getDocs()
+ names(con)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+and where the <b xmlns:rs="http://www.omegahat.org/RS" xmlns:s="http://cm.bell-labs.com/stat/S4" xmlns="" class="$">con</b> value is implicitly provided.
+</p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="/Users/duncan/Classes/StatComputing/XDynDocs/inst/XSL/docbook-xsl-current/images/note.svg"></img></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+We do have to specify auth when calling <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//uploadDoc.html">uploadDoc()
+  </a></i>.
+</p></td></tr></table></div><p>
+Having logged in, we can find out about the existing documents.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292733"><div><pre class="rcode" title="R code">
+docs = getDocs(con)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+This is a list of R descriptions from the XML contents.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292736"><div><pre class="rcode" title="R code">
+names(docs)
+<pre class="routput">
+[1] "my foo1"                                         
+[2] "my foo1"                                         
+[3] "my foo1"                                         
+[4] "my foo"                                          
+[5] "another bob"                                     
+[6] "\"~/foo.csv\""                                   
+[7] "SampleDoc"                                       
+[8] "Copy of This is a sample document that we are..."
+[9] "bob"                                             
+</pre>
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292747"><div><pre class="rcode" title="R code">
+names(docs[[1]])
+<pre class="routput">
+ [1] "id"         "published"  "updated"    "category"   "title"     
+ [6] "content"    "alternate"  "self"       "edit"       "edit-media"
+[11] "author"     "feedLink"  
+</pre>
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292754"><div><pre class="rcode" title="R code">
+docs[[1]]
+<pre class="routput">
+$id
+[1] "http://docs.google.com/feeds/documents/private/full/document%3Adfwhmfk3_6c26hc6gr"
+
+$published
+[1] "2008-09-24 14:02:56 PDT"
+
+$updated
+[1] "2008-09-24 14:02:56 PDT"
+
+$category
+                                        scheme 
+       "http://schemas.google.com/g/2005#kind" 
+                                          term 
+"http://schemas.google.com/docs/2007#document" 
+                                         label 
+                                    "document" 
+
+$title
+[1] "my foo1"
+
+$content
+                                                                                                                                                 type 
+                                                                                                                                          "text/html" 
+                                                                                                                                                  src 
+"http://docs.google.com/feeds/download/documents/RawDocContents?action=fetch&amp;justBody=false&amp;revision=_latest&amp;editMode=false&amp;docID=dfwhmfk3_6c26hc6gr" 
+
+$alternate
+                                               rel 
+                                       "alternate" 
+                                              type 
+                                       "text/html" 
+                                              href 
+"http://docs.google.com/Doc?id=dfwhmfk3_6c26hc6gr" 
+
+$self
+                                                                                rel 
+                                                                             "self" 
+                                                                               type 
+                                                             "application/atom+xml" 
+                                                                               href 
+"http://docs.google.com/feeds/documents/private/full/document%3Adfwhmfk3_6c26hc6gr" 
+
+$edit
+                                                                                         rel 
+                                                                                      "edit" 
+                                                                                        type 
+                                                                      "application/atom+xml" 
+                                                                                        href 
+"http://docs.google.com/feeds/documents/private/full/document%3Adfwhmfk3_6c26hc6gr/fli10bmo" 
+
+$`edit-media`
+                                                                                     rel 
+                                                                            "edit-media" 
+                                                                                    type 
+                                                                             "text/html" 
+                                                                                    href 
+"http://docs.google.com/feeds/media/private/full/document%3Adfwhmfk3_6c26hc6gr/fli10bmo" 
+
+$author
+dtemplelang@gmail.com 
+        "dtemplelang" 
+
+$feedLink
+                                                                          rel 
+                       "http://schemas.google.com/acl/2007#accessControlList" 
+                                                                         href 
+"http://docs.google.com/feeds/acl/private/full/document%3Adfwhmfk3_6c26hc6gr" 
+
+attr(,"class")
+[1] "GoogleDocument"
+</pre>
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><p>
+We can turn these into a data frame with
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292766"><div><pre class="rcode" title="R code">
+as(docs, "data.frame")
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><p>
+We can fetch a document with 
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292773"><div><pre class="rcode" title="R code">
+getDocContent(docs[["SampleDoc"]], con)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+or directly by the name of the document
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292776"><div><pre class="rcode" title="R code">
+getDocContent("SampleDoc", con)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><p>
+We can remove a document with
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292782"><div><pre class="rcode" title="R code">
+deleteDoc("my foo1", con)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+or
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292785"><div><pre class="rcode" title="R code">
+deleteDoc(docs[[1]], con)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+You can check what files remain with
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292789"><div><pre class="rcode" title="R code">
+names(getDocs(con))
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><p>
+Finally, to upload a file from your system to your Google Documents account, 
+we use <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//uploadDoc.html">uploadDoc()
+  </a></i>.
+For this function, you currently have specify a value for the <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rarg">auth</i>
+parameter. This is the value returned by <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//getGoogleAuth.html">getGoogleAuth()
+  </a></i> earlier
+on.
+</p><p>
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//uploadDoc.html">uploadDoc()
+  </a></i> you can supply a file name or the actual
+content to upload.
+If the value of <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rarg">content</i> matches a file name,
+then we read the contents of that  file and upload that string.
+If this is a binary file, you should read the contents yourself
+and pass those as the value for <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rarg">content</i>.
+</p><p>
+We try to determine the type of document (e.g. a spreadsheet, a Word
+document, a CSV file) from the extension of the filename (using
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//findType.html">findType()
+  </a></i> and matching the extension - MIME type table
+from Google's documentation).  If the extension doesn't match or if
+you are specifying the content directly, you should specify a vale for
+the <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rarg">type</i> parameter.  This can either be the MIME type
+(or an initial part thereof), e.g "text/html" or "text/tab", or you
+can provide the corresponding extension, e.g. "htm" or "tab".
+</p><p>
+The <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rarg">name</i> parameter allows you to specify a name to be
+used as the title of the document in the Google Documents manager panel.
+</p><p>
+Note that Google cannot convert all types of documents and
+does not necessarily even handle "rich" CSV files.
+</p><p>
+So let's upload a CSV file with the contents
+</p><pre class="programlisting">
+1, 2, 3
+4, 5, 6
+</pre><p>
+We'll first upload the contents directly
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292852"><div><pre class="rcode" title="R code">
+x = "1, 2, 3\n4, 5, 6\n"
+uploadDoc(x, auth, name = "direct csv", type = "csv")
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+If we put the contents in the file /tmp/foo.csv,
+then we can upload this as 
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292857"><div><pre class="rcode" title="R code">
+uploadDoc("/tmp/foo.csv", auth)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+Here <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//uploadDoc.html">uploadDoc()
+  </a></i> can infer the MIME type and the 
+name from the local file name.
+</p><p>
+Binary files are slightly more complex.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292868"><div><pre class="rcode" title="R code">
+f = system.file("sampleDocs", "SampleDoc.doc", package = "RGoogleDocs")
+uploadDoc(f, auth, type = "doc", binary = TRUE)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+To upload a spreadsheet
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292872"><div><pre class="rcode" title="R code">
+f = system.file("sampleDocs", "SampleSpreadsheet.xls", package = "RGoogleDocs")
+uploadDoc(f, auth, name = basename(f), binary = TRUE)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+When <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rarg">binary</i> is <i xmlns:rs="http://www.omegahat.org/RS" xmlns:s="http://cm.bell-labs.com/stat/S4" xmlns=""><code>TRUE</code></i>,
+the <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//uploadDoc.html">uploadDoc()
+  </a></i> function
+calls <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//readBinary.html">readBinary()
+  </a></i> which
+amounts to calling
+<code xmlns:rs="http://www.omegahat.org/RS" xmlns:s="http://cm.bell-labs.com/stat/S4" xmlns="" class="Sexpression">readBin(f, "raw", 22016)</code>
+as it determines the number of bytes in the file for us.
+You can work with raw content yourself directly and upload that.
+This is like uploading the contents as text when there is 
+no associated file but the content was generated from a previous call.
+For example, let's read the binary file ourselves:
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292894"><div><pre class="rcode" title="R code">
+vec = readBinary(f)
+class(vec)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+Then we can upload it, but again we have to specify the 
+type and any name we want.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292898"><div><pre class="rcode" title="R code">
+uploadDoc(vec, auth, type = "xls")
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><p>
+You can also upload material to a specific folder.
+We do this by specifying the identity of the folder
+via <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//uploadDoc.html">uploadDoc()
+  </a></i>'s  <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rarg">folder</i> parameter.
+This should be a <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns=""><a href="Help/GoogleFolder-class.html">GoogleFolder</a></i> object
+retrieved from, for example, a call to <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//getDocs.html">getDocs()
+  </a></i>
+or <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//listFolder.html">listFolder()
+  </a></i>.
+We get the list of "documents"
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292923"><div><pre class="rcode" title="R code">
+  docs = getDocs(con)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+and then can upload a file to say "MyFolder" using
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292927"><div><pre class="rcode" title="R code">
+  uploadDoc(x, con, name = "boo", type = "csv", folder = docs$MyFolder)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+A more convenient version of this is
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292931"><div><pre class="rcode" title="R code">
+  f[["boo1", type = 'csv']] = x
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+where we "assign" the value to a name within the folder as if it were a list.
+Note that we can specify the type and other arguments that are passed
+on to <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//uploadDoc.html">uploadDoc()
+  </a></i>.
+Also note that the connection object is obtained from the folder object.
+</p><p>
+We can also specify the folder by name, e.g.,
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292943"><div><pre class="rcode" title="R code">
+  uploadDoc(x, con, name = "boo2", type = "csv", folder = "MyFolder")
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+But be aware that this involves an implicit call to <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//getDocs.html">getDocs()
+  </a></i>
+and so involves an extra "trip to the server".
+</p><p>
+Finally, if you happen to know the "internal" identity of the folder,
+i.e. is /feeds/folders/.../ URL, you can specify this.
+But note that it must be "escaped" using the <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//I.html">I()
+  </a></i>
+function, e.g.,
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292959"><div><pre class="rcode" title="R code">
+  uploadDoc(x, con, name = "boo3", type = "csv", folder = I(docs$MyFolder@content["src"]))
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><div class="section" title="Tools for working with word processing documents"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id36292964"></a>Tools for working with word processing documents</h2></div></div></div><p>
+The word processing documents are just HTML documents.  So we can use
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//htmlParse.html">htmlParse()
+  </a></i> (or <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//htmlTreeParse.html">htmlTreeParse()
+  </a></i>) and the
+XPath to find what we want.  We can get the content or find the nodes
+of interest and modify them and then upload the resulting document.
+We have provided some simple functions for accessing elements of a
+word processing document.  These are <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//comments.html">comments()
+  </a></i>,
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//images.html">images()
+  </a></i>, <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//footnotes.html">footnotes()
+  </a></i> and
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//sections.html">sections()
+  </a></i>.  Each of these takes either the name of a
+document and a connection (returned from
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//getConnection.html">getConnection()
+  </a></i>) or the parsed HTML document.
+For example, we can call each of these as either:
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292999"><div><pre class="rcode" title="R code">
+comments("Many Parts", con)
+doc = htmlParse(getDocContent("Many Parts", con), asText = TRUE, error = function(...) {})
+comments(doc)
+sections(doc)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+The latter approach avoids retrieving the document and parsing it multiple
+times.
+</p><p>
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//comments.html">comments()
+  </a></i> returns a data frame with a row
+for each comment and columns giving
+the text of the comment, the date the comment was last
+modified ( or created?) and the name of the author of the comment.
+</p><p>
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//sections.html">sections()
+  </a></i> returns a character vector giving the
+title of the different sections. The names of the elements
+of this vector are numbers giving the level of the section.
+This is taken from the h1, h2, h3, ..., h6 elements in the HTML document.
+</p><p>
+The <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//footnotes.html">footnotes()
+  </a></i> function returns
+a character vector giving the text of the footnotes.
+The names are the unique identifiers within the document of these elements.
+</p><p>
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//images.html">images()
+  </a></i> returns the names of the image files referenced
+within the document.  Note  that these are not the original names of the
+image files, but the names as they are stored within the Google documents repository.
+</p></div><div class="section" title="Spreadsheets"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id36293039"></a>Spreadsheets</h2></div></div></div><p>
+We have added basic functions for working with spreadsheets.
+We create a connection for working with spreadsheets rather than word processing
+documents. We do this by specifying the service as "wise" rather than
+the default "writely".
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293049"><div><pre class="rcode" title="R code">
+  sheets.con = getGoogleDocsConnection(getGoogleAuth("dtemplelang@gmail.com", "...", service = "wise"))
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+When we call <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//getDocs.html">getDocs()
+  </a></i> with this connection, we get back
+information about spreadsheets only.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293057"><div><pre class="rcode" title="R code">
+  a = getDocs(sheets.con)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+The function <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//getWorksheets.html">getWorksheets()
+  </a></i> is used
+to obtain a list of objects that identify each of the worksheets within
+a spreadsheet.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293064"><div><pre class="rcode" title="R code">
+  ts = getWorksheets(a$TwoSheets, sheets.con)
+  names(ts)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//getWorksheets.html">getWorksheets()
+  </a></i> is smart enough to  be able to
+work from the name of the spreadsheet, e.g.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293072"><div><pre class="rcode" title="R code">
+  ts = getWorksheets("TwoSheets", sheets.con)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+but it is faster to use the GoogleDocument object returned via
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//getDocs.html">getDocs()
+  </a></i> as it avoids an extra request to the
+Google Docs server.
+</p><p>
+We can do various things with the spreadsheet and its worksheets.
+We can query the dimensions and/or the contents of the worksheet or a part of it,
+we can modify one or more cells, and we can add a worksheet to a spreadsheet.
+The functions <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//dim.html">dim()
+  </a></i>, <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//nrow.html">nrow()
+  </a></i> and
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//ncol.html">ncol()
+  </a></i> all work.
+These report the "declared" dimensions of the worksheet,
+i.e. how many rows and columns have been allocated.
+This is often way more than are actually used.
+The function <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//getExtent.html">getExtent()
+  </a></i> tells us
+about the rectangular region that is actually in use.
+This returns a 2 x 2 matrix giving the "bounding box"
+of the effective cells in use.
+If there is nothing in the first row and column,
+this would return 2, 2 as the indices of the
+first cell. 
+</p><p>
+We can convert a worksheet to a matrix or data frame using 
+the regular <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//as.html">as()
+  </a></i> function, e.g.
+<code xmlns:rs="http://www.omegahat.org/RS" xmlns:s="http://cm.bell-labs.com/stat/S4" xmlns="" class="Sexpression">as(sheet, "matrix")</code>
+or
+<code xmlns:rs="http://www.omegahat.org/RS" xmlns:s="http://cm.bell-labs.com/stat/S4" xmlns="" class="Sexpression">as(sheet, "data.frame")</code>.
+The coercion methods are merely calls to
+the function <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//sheetAsMatrix.html">sheetAsMatrix()
+  </a></i>
+which provides more control of the coercion.
+It allows us to specify how the column names
+are found (e.g. as the first row of the worksheet,
+or given in the call as the value of the <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rarg">header</i> parameter)
+and whether to discard "empty" rows and columns.
+For example, 
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293124"><div><pre class="rcode" title="R code">
+  sheetAsMatrix(ts$Sheet1, header = TRUE, as.data.frame = TRUE, trim = TRUE)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><p>
+If we want to access one or more cells, we can convert the entire
+worksheet into a data frame and then use R's regular subsetting.
+However, this is potentially expensive in that we have to download the
+entire worksheet and then process all of the contents.  If the
+worksheet is large and we only want a few values, we are doing a lot
+of extra work.  
+So we have provided methods for the subsetting operator <code xmlns:rs="http://www.omegahat.org/RS" xmlns:s="http://cm.bell-labs.com/stat/S4" xmlns="" class="sfunction">[</code>
+that do this more efficiently by retrieving and processing only the
+specified cells.
+We can use these on the <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns=""><a href="Help/GoogleWorksheetRef-class.html">GoogleWorksheetRef</a></i> objects.
+For example, suppose we have our sheet with 
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293143"><div><pre class="rcode" title="R code">
+con = getGoogleDocsConnection("me", "my password")
+mine4 = getWorksheets("mine4", con)[[1]]
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+then we can get a single cell with
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293147"><div><pre class="rcode" title="R code">
+mine4[2, 3]
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+We can get multiple cell values, e.g.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293151"><div><pre class="rcode" title="R code">
+mine4[1:2, ]
+mine4[, 2:3]
+mine4[1, ]
+mine4[, 3]
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><p>
+We can also assign values to one or more cells.
+Let's start by adding a new worksheet to the spreadsheet mine4:
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293159"><div><pre class="rcode" title="R code">
+mine4 = getDocs(con)$mine4
+sh = addWorksheet(mine4, con, "test")
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+Now we can populate it
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293162"><div><pre class="rcode" title="R code">
+sh[1,1] = 2
+sh[2, 1:10] = letters[1:10]
+sh[, 11] = letters[1:5]
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><p>
+When we omit a dimension, the affected cells
+range over the extent
+</p></div><div class="section" title="Adding Documents"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id36293172"></a>Adding Documents</h2></div></div></div><p>
+We can use <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//uploadDoc.html">uploadDoc()
+  </a></i> to upload 
+a document or even an R object such as a data frame or matrix
+which will be converted to a spreadsheet via a CSV upload.
+We can use <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//addSpreadsheet.html">addSpreadsheet()
+  </a></i> to create a spreadsheet
+document with a single empty worksheet of specified dimensions.
+This is a simple wrapper for <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//uploadDoc.html">uploadDoc()
+  </a></i>
+Note that when uploading a document using either of these
+functions, you are communicating with the documents API,
+i.e. writely, and you need authentication for that.
+So if you have a connection for the spreadsheets API, you cannot
+use that.
+</p></div><div class="section" title="Managing Documents"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id36293196"></a>Managing Documents</h2></div></div></div><p>
+We have been focusing on the contents of documents.
+The Google Docs API allows us to manage the collection of documents.
+It provides functionality to upload and delete/remove documents,
+rename documents, create folders and move documents into folders.
+
+
+The function <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//addFolder.html">addFolder()
+  </a></i> allows us to create
+a new folder. This is created at the top-level.
+We can then move it to a different folder.
+The function <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//moveToFolder.html">moveToFolder()
+  </a></i> does this.
+<i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//addFolder.html">addFolder()
+  </a></i> takes one or more  names
+and a connection and creates the folders with these names.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293217"><div><pre class="rcode" title="R code">
+f = addFolder(c("foo", "bar"), con)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+The results are <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns=""><a href="Help/GoogleFolder-class.html">GoogleFolder</a></i> objects.
+We can use these as target/destinations  in
+calls to <i xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunc"><a href="Help//moveToFolder.html">moveToFolder()
+  </a></i>.
+For example, we can move the folder bar into foo with
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293228"><div><pre class="rcode" title="R code">
+moveToFolder(f$bar, f$foo)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><p>
+We can change meta data, such as the title, of the document.
+This is done via the operators <code xmlns:rs="http://www.omegahat.org/RS" xmlns:s="http://cm.bell-labs.com/stat/S4" xmlns="" class="sfunction">$*&lt;-</code> and <code xmlns:rs="http://www.omegahat.org/RS" xmlns:s="http://cm.bell-labs.com/stat/S4" xmlns="" class="sfunction">[&lt;-</code>.
+(The accessor methods are not supported.)
+Given a document <b xmlns:rs="http://www.omegahat.org/RS" xmlns:s="http://cm.bell-labs.com/stat/S4" xmlns="" class="$">doc</b> we set, e.g., the title with
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293246"><div><pre class="rcode" title="R code">
+doc$title = "new title"
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+We can also use 
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293249"><div><pre class="rcode" title="R code">
+doc["title"] = "new title"
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+The benefit of the second approach (apart from allowing variables, 
+e.g. <code xmlns:rs="http://www.omegahat.org/RS" xmlns:s="http://cm.bell-labs.com/stat/S4" xmlns="" class="Sexpression">var = "title"; doc[ var ] = value</code>)
+is that we can set multiple values in a single call, e.g.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36293257"><div><pre class="rcode" title="R code">
+doc["title", "author"] = list("new title", c(name = "Bob", email = "bob@bob.com"))
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p></div><div class="section" title="Comment"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id36293263"></a>Comment</h2></div></div></div><p>
+The Google documents and spreadsheets servics are interesting. The
+Web-based nature has several attractive aspects. However, the
+interactive tools are currently quite limited relative to regular
+office applications.  There is little functionality for working richly
+with styles.  The APIs are also reasonably limited.  Furthermore, some
+of the documentation is slightly unclear and even incorrect, e.g. the
+code for some examples do not correspond to what is being discussed in
+the text, the batch editing section talks about POST, but in fact PUT
+works and POST does not appear to.  While developing some of the
+functionality in this package, the Google service claimed it was
+experiencing technical difficulties and was unable to list all my
+documents.
+So I am not ready to trade-in my office tools (not that I use them
+very much anyway!), but the notion of publishing "live" documents is
+appealing.  The IDynDocs package has a different take on "live".
+</p></div></div></body></html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title></title><link rel="stylesheet" type="text/css" href="/Users/duncan/Classes/StatComputing/XDynDocs/inst/CSS/OmegaTech.css"></link><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"></meta>
+<link xmlns="" rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0r4/build/tabview/assets/skins/sam/tabview.css">
+<script xmlns="" type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script xmlns="" type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/element/element-min.js"></script>
+<script xmlns="" type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/tabview/tabview-min.js"></script>
+<script xmlns="" type="text/javascript" src="/Users/duncan/Classes/StatComputing/XDynDocs/inst/JavaScript/yahooTabUtils.js"></script>
+<script xmlns="" type="text/javascript" src="http://www.omegahat.org/DynDocs/JavaScript/toggleHidden.js"></script>
+</head><body class="yui-skin-sam">
+<script xmlns="" type="text/javascript"><!--
+var toggleCodeIds = [
+ 
+   "id36047839", 
+   "id36046384", 
+   "id36046379", 
+   "id36292720", 
+   "id36292723", 
+   "id36292729", 
+   "id36292731", 
+   "id36292734", 
+   "id36292738", 
+   "id36292741", 
+   "id36292745", 
+   "id36292749", 
+   "id36292757"
+];
+--></script><p xmlns=""></p>
+<div class="article"><div class="titlepage"><div><div><h2 class="title"><a id="id36045955"></a>
+</h2></div></div><hr></hr></div><p>
+This is motivated by an email message to R-help entitled "Modifying
+output to Google Docs" by Ajay Ohri.  The idea is to be able to
+interact with Google Documents from within R.  
+Details are available 
+from <a class="ulink" href="http://code.google.com/apis/documents/developers_guide_protocol.html" target="_top">http://code.google.com/apis/documents/developers_guide_protocol.html</a>.
+After we get the
+document, we can manipulate it with XML or whatever tools are
+appropriate for the format of the document.  But we focus here on
+accessing the service.  This uses HTTPs and some authentication.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36047839"><div><pre class="rcode" title="R init">
+library(RCurl)
+library(XML)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+See http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36046384"><div><pre class="rcode" title="R code">
+ans = 
+ getForm("https://www.google.com/accounts/ClientLogin",
+         accountType = "HOSTED_OR_GOOGLE",
+         Email = "dtemplelang@gmail.com",
+         Passwd = gpasswd,
+         service = "writely", 
+         source = "R-GoogleDocs-0.1",
+      .opts = list(ssl.verifypeer = FALSE))
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+getForm or postForm work fine.
+We extract the settings from this with the following code:
+</p><pre xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="" class="rfunction">
+getGoogleAuth = 
+function(ans)
+{
+  x = unlist(strsplit(ans, "\\\n"))
+  tmp = strsplit(x, "=")
+  structure(sapply(tmp, `[`, 2), names = sapply(tmp, `[`, 1)) 
+}
+</pre>
+<p><br xmlns:s3="http://www.r-project.org/S3" xmlns:cpp="http://www.cplusplus.org" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="">
+We are looking for the Auth field. (The SID and LSID are not currently used.)
+
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36046379"><div><pre class="rcode" title="R code">
+ auth = getGoogleAuth(ans)["Auth"]
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+</p><p>
+From now on,each HTTPS request to the Google API should have an
+HTTP header  field
+</p><pre class="programlisting">
+Authorization: GoogleLogin auth=yourAuthValue
+</pre><p>
+So we create a new Curl handle
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292720"><div><pre class="rcode" title="R code">
+curl = getCurlHandle(httpheader = c(Authorization = paste("GoogleLogin auth=", auth, sep = "")))
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292723"><div><pre class="rcode" title="R code">
+x = getURL("http://docs.google.com/feeds/documents/private/full", curl = curl)
+doc = xmlParse(x, asText = TRUE)       
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+
+How many entries are there?
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292729"><div><pre class="rcode" title="R code">
+entries = getNodeSet(doc, "//w:entry", "w")
+length(entries)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+What are their names?
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292731"><div><pre class="rcode" title="R code">
+xpathSApply(doc, "//g:entry/g:title", xmlValue, namespaces = "g")
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+Which are documents and which are spreadsheets?
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292734"><div><pre class="rcode" title="R code">
+xpathSApply(doc, "//g:entry/g:category/@label", namespaces = "g")
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+
+When were these last modified?
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292738"><div><pre class="rcode" title="R code">
+strptime(xpathSApply(doc, "//g:entry/g:updated", xmlValue, namespaces = "g"),
+          "%Y-%m-%dT%H:%M:%S")
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+
+Let's download the first one
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292741"><div><pre class="rcode" title="R code">
+gdoc = getURL(xmlGetAttr(entries[[1]][["content"]], "src"), curl = curl)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+(Don't forget to use the curl object with the Authorization header.)
+This is an HTML document.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292745"><div><pre class="rcode" title="R code">
+hdoc = htmlParse(gdoc)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+
+Let's modify this document slightly.
+Since the HTML parsing doesn't work, we'll use a regular expression for now.
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292749"><div><pre class="rcode" title="R code">
+gdoc = gsub("This uses information from", "Working from", gdoc)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div>
+<p>
+Now we upload the document
+postForm("http://docs.google.com/feeds/documents/private/full",
+          .opts = list(httpheader = c(c(Authorization = paste("GoogleLogin auth=", auth, sep = "")), 
+                                         Slug = "My Sample Doc from R")),
+          'x' = fileUpload("Rdummy", gdoc, "google.doc"),
+          curl = curl)
+</p><div xmlns="" class="codeToggle"><div class="unhidden" id="id36292757"><div><pre class="rcode" title="R code">
+id = xmlGetAttr(entries[[1]][names(entries[[1]])== "link"][[3]], "href")
+# "http://docs.google.com/feeds/documents/private/full/document%3Adfwhmfk3_2gwrnvdd3"
+curlPerform(customrequest = "DELETE", url = id, curl = curl)
+</pre></div></div></div>
+<div xmlns="" class="clearFloat"></div></div></body></html>

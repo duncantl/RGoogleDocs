@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<link rel=stylesheet href="../OmegaTech.css" >
+<title>@PKG_NAME@</title>
+</head>
+
+<body>
+<h1>The @PKG_NAME@ package</h1>
+<p align="right">Last Release:
+  <a href="@TAR_FILE@">@VERSION@</a> (<font color="red">@DATE@</font>)</p>
+
+<p>
+This package is an example of using the RCurl and XML packages
+to quickly develop an interface to the Google Documents
+API.  It was written to test RCurl and also to illustrate
+how to use these tools with modern Web applications.
+Google Documents is a REST "application" and so this
+is an example of using R to interface to that.
+</p>
+
+<p> The package allows you to get a list of the documents and details
+about each of them, download the contents of a document, remove a
+document, and upload a document, even binary files.
+</p>
+
+<p>
+There is some documentation for the package at this point
+in the form of a <a href="run.html">"user's guide"</a>
+(or in <a href="run.pdf">PDF form</a>).
+These are included with the package.
+</p>
+
+
+<p>
+If you want to upload binary files, you will want to install
+a <a href="http://www.omegahat.org/Prerelease/RCurl_0.91-0.tar.gz">beta version</a> of the RCurl package.
+<a href="
+</p>
+
+<p>
+<hr width="50%">
+<a href="http://www.stat.ucdavis.edu/~duncan">Duncan Temple Lang</a>
+<a href=mailto:duncan@wald.ucdavis.edu>&lt;duncan@wald.ucdavis.edu&gt;</a>
+<!-- hhmts start -->
+Last modified: Wed Sep 24 11:51:45 PDT 2008
+<!-- hhmts end -->
+</p>
+</body> </html>

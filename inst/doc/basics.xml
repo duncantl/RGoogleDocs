@@ -1,0 +1,110 @@
+<article xmlns:r="http://www.r-project.org">
+<title>
+</title>
+<para>
+This is motivated by an email message to R-help entitled "Modifying
+output to Google Docs" by Ajay Ohri.  The idea is to be able to
+interact with Google Documents from within R.  
+Details are available 
+from <ulink url="http://code.google.com/apis/documents/developers_guide_protocol.html"/>.
+After we get the
+document, we can manipulate it with XML or whatever tools are
+appropriate for the format of the document.  But we focus here on
+accessing the service.  This uses HTTPs and some authentication.
+<r:init>
+library(RCurl)
+library(XML)
+</r:init>
+See http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html
+<r:code><![CDATA[
+ans = 
+ getForm("https://www.google.com/accounts/ClientLogin",
+         accountType = "HOSTED_OR_GOOGLE",
+         Email = "dtemplelang@gmail.com",
+         Passwd = gpasswd,
+         service = "writely", 
+         source = "R-GoogleDocs-0.1",
+      .opts = list(ssl.verifypeer = FALSE))
+]]></r:code>
+getForm or postForm work fine.
+We extract the settings from this with the following code:
+<r:function><![CDATA[
+getGoogleAuth = 
+function(ans)
+{
+  x = unlist(strsplit(ans, "\\\n"))
+  tmp = strsplit(x, "=")
+  structure(sapply(tmp, `[`, 2), names = sapply(tmp, `[`, 1)) 
+}
+]]></r:function>
+We are looking for the Auth field. (The SID and LSID are not currently used.)
+
+<r:code><![CDATA[
+ auth = getGoogleAuth(ans)["Auth"]
+]]></r:code>
+</para>
+<para>
+From now on,each HTTPS request to the Google API should have an
+HTTP header  field
+<programlisting>
+Authorization: GoogleLogin auth=yourAuthValue
+</programlisting>
+So we create a new Curl handle
+<r:code>
+curl = getCurlHandle(httpheader = c(Authorization = paste("GoogleLogin auth=", auth, sep = "")))
+</r:code>
+
+<r:code><![CDATA[
+x = getURL("http://docs.google.com/feeds/documents/private/full", curl = curl)
+doc = xmlParse(x, asText = TRUE)       
+]]></r:code>
+
+How many entries are there?
+<r:code><![CDATA[
+entries = getNodeSet(doc, "//w:entry", "w")
+length(entries)
+]]></r:code>
+What are their names?
+<r:code>
+xpathSApply(doc, "//g:entry/g:title", xmlValue, namespaces = "g")
+</r:code>
+Which are documents and which are spreadsheets?
+<r:code>
+xpathSApply(doc, "//g:entry/g:category/@label", namespaces = "g")
+</r:code>
+
+When were these last modified?
+<r:code>
+strptime(xpathSApply(doc, "//g:entry/g:updated", xmlValue, namespaces = "g"),
+          "%Y-%m-%dT%H:%M:%S")
+</r:code>
+
+Let's download the first one
+<r:code>
+gdoc = getURL(xmlGetAttr(entries[[1]][["content"]], "src"), curl = curl)
+</r:code>
+(Don't forget to use the curl object with the Authorization header.)
+This is an HTML document.
+<r:code>
+hdoc = htmlParse(gdoc)
+</r:code>
+
+Let's modify this document slightly.
+Since the HTML parsing doesn't work, we'll use a regular expression for now.
+<r:code>
+gdoc = gsub("This uses information from", "Working from", gdoc)
+</r:code>
+Now we upload the document
+postForm("http://docs.google.com/feeds/documents/private/full",
+          .opts = list(httpheader = c(c(Authorization = paste("GoogleLogin auth=", auth, sep = "")), 
+                                         Slug = "My Sample Doc from R")),
+          'x' = fileUpload("Rdummy", gdoc, "google.doc"),
+          curl = curl)
+</para>
+
+<r:code>
+id = xmlGetAttr(entries[[1]][names(entries[[1]])== "link"][[3]], "href")
+# "http://docs.google.com/feeds/documents/private/full/document%3Adfwhmfk3_2gwrnvdd3"
+curlPerform(customrequest = "DELETE", url = id, curl = curl)
+</r:code>
+</article>

@@ -1,0 +1,21 @@
+Package: RGoogleDocs
+Version: 0.6-0
+Title:  Primitive interface to Google Documents from R
+Description: This package provides an initial, elementary
+ interface to Google's Document API for word processing and spreadsheet documents.
+  One needs a Google login and password and then one
+  can list, download, delete and upload documents
+  to the Google account. There are facilities for
+  accessing the contents of spreadsheets and 
+  querying for elements such as images, links, comments and section titles
+  of word processing documents.
+Note:  There is now R documentation for the functions in the package.
+  There is a brief "users guide" in inst/doc/run.pdf (and inst/doc/run.html).
+  And the document inst/doc/basics.pdf gives more details about the low-level
+  interaction with Google's API.
+License: BSD
+Depends: methods
+Imports: RCurl, XML
+Author: Duncan Temple Lang
+Maintainer: Duncan Temple Lang <duncan@wald.ucdavis.edu>
+

@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Given a Public ID</title><link rel="stylesheet" type="text/css" href="/Users/duncan/Classes/StatComputing/XDynDocs/inst/CSS/OmegaTech.css"></link><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"></meta>
+<link xmlns="" rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0r4/build/tabview/assets/skins/sam/tabview.css">
+<script xmlns="" type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script xmlns="" type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/element/element-min.js"></script>
+<script xmlns="" type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/tabview/tabview-min.js"></script>
+<script xmlns="" type="text/javascript" src="/Users/duncan/Classes/StatComputing/XDynDocs/inst/JavaScript/yahooTabUtils.js"></script>
+<script xmlns="" type="text/javascript" src="http://www.omegahat.org/DynDocs/JavaScript/toggleHidden.js"></script>
+</head><body class="yui-skin-sam">
+<script xmlns="" type="text/javascript"><!--
+var toggleCodeIds = [
+ 
+];
+--></script><p xmlns=""></p>
+<div class="article" title="Given a Public ID"><div class="titlepage"><div><div><h2 class="title"><a id="id36045955"></a>Given a Public ID</h2></div></div><hr></hr></div><div class="section"><div class="titlepage"></div><p>
+The goal  here is to how to go from a
+URL in which we can see a public spreadsheet as
+HTML/JavaScript to being able to treat
+it like one of our own and
+access the worksheets and cells via our RGoogleDocs
+functions.
+</p><p>
+We'll use GapMinder's world application as the source
+of our problem.
+If you view this and then click on the data source, you 
+will end up viewing a URL  in your Web browser and
+it will be something like:
+</p><pre class="programlisting">
+http://spreadsheets.google.com/pub?key=phAwcNAVuyj2tPLxKvvnNPA
+</pre><p>
+So let's take the key and see how we can access the underlying GoogleDoc
+object.
+</p><p>
+We use the key to form the following URL:
+<code xmlns="">
+key = "phAwcNAVuyj2tPLxKvvnNPA"
+u = sprintf("http://spreadsheets.google.com/feeds/worksheets/%s/public/values", key)
+</code>
+We can get the content of this URL with
+<code xmlns="">
+zz = getURLContent(u, followlocation = TRUE)
+</code>
+Note we don't need any authentication.
+</p><p>
+Now this looks to be something very similar to what we get back from <span style="color: red">&lt;func&gt;getWorksheets&lt;/func&gt;</span>.
+So we can process it as we do that.
+<code xmlns="">
+doc = xmlParse(zz)
+entries = getNodeSet(doc, "//x:entry", "x")
+length(entries)
+lapply(entries, RGoogleDocs:::readSheetRef, NULL)
+names(ans) = sapply(entries, function(x) xmlValue(x[["title"]]))
+</code>
+</p><p>
+So we want a high-level function that takes a key and creates
+a GoogleSpreadsheet object.
+</p></div></div></body></html>

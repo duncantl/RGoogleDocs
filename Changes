@@ -1,0 +1,73 @@
+Version 0.6-0
+  
+  *   Clearer error message if uploadDoc() fails at the server end.
+
+  *   Allow caller to specify type AsIs (type = I(value)) in uploadDoc() to avoid
+      interpreting by RGoogleDocs. Google Docs itself still checks the type is valid.
+
+  *   Updated the URLs to 'https'.
+
+  *   searchDocs() can handle text or binary response to query.
+
+Version 0.5-0
+
+  *   uploadDoc() now has a replace parameter which, if TRUE, causes any existing documenting
+      with the same name to be replaced by the new document, if the upload is successful.
+      (Raised on StackOverflow, March 4 2011.)
+  
+  *   deleteDoc() now has methods for handling lists, document names, document URLs and
+      document description objects (returned from getDocs()).
+
+  *   deleteDoc() can compute its own connection if the GoogleDocsPassword option is set.
+
+  *   Method for [ for GoogleDocList so that the result is also a GoogleDocList.
+
+  *   deleteDoc() sets its own writefunction which modifies the curl handle.
+      This is due to crashes when this is not set on cloned/duplicated curl handles.
+
+
+Version 0.4-1
+
+  *  Updated for what seems to be a change on the server for reading spreadsheets.
+
+Version 0.4-0
+  
+  *  Added the ability to read public spreadsheets.
+
+  *  Introduced unauthenticated connection class for dealing with public documents.
+
+  *  Generalized getting a cell's value which had meant omitting some values.
+
+Version 0.3-0
+
+  *  Added the ability to upload to a folder.
+
+
+Version 0.2-3
+
+  *   Added followlocation = TRUE to getURL() calls to handle "Moved temporarily".
+  
+Version 0.2-2
+
+  *   Changed sheetAsMatrix() to use processCells2() (rather than processCells()).
+
+  *   Updates to run.xml documentation/vignette to reflect new function names.
+
+Version 0.2-1
+
+  *   Simple bug when setting the access slot in getXMLDocEntryInfo() via getDocs()
+      when there is no feedLink in the returned XML description. 
+
+Version 0.2-0
+
+  *  Added documentation for R functions.
+
+  *  Added classes to differentiate between word processing and spreadsheet documents
+
+  *  Facilities for getting the worksheets in a spreadsheet and their contents:
+      getSheets(), as(sheet, "matrix"), sheetAsMatrix()
+
+  *  getGoogleAuth() and getConnection() now more aware of the different services (writely and wise)
+     and the latter returns an object of a class corresponding to the particular service.
+
+  *  Many, many more...  See run.xml
