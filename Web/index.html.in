@@ -33,8 +33,10 @@ These are included with the package.
 
 <p>
 If you want to upload binary files, you will want to install
-a <a href="http://www.omegahat.org/Prerelease/RCurl_0.91-0.tar.gz">beta version</a> of the RCurl package.
-<a href="
+a <a
+href="http://www.omegahat.org/Prerelease/RCurl_0.91-0.tar.gz">beta
+version</a> of the RCurl package,
+or  a more recent release.
 </p>
 
 <p>
@@ -42,7 +44,7 @@ a <a href="http://www.omegahat.org/Prerelease/RCurl_0.91-0.tar.gz">beta version<
 <a href="http://www.stat.ucdavis.edu/~duncan">Duncan Temple Lang</a>
 <a href=mailto:duncan@wald.ucdavis.edu>&lt;duncan@wald.ucdavis.edu&gt;</a>
 <!-- hhmts start -->
-Last modified: Wed Sep 24 11:51:45 PDT 2008
+Last modified: Mon Oct 15 12:39:40 PDT 2012
 <!-- hhmts end -->
 </p>
 </body> </html>

@@ -53,7 +53,8 @@ getWorksheets =
   # Given the basic description of the document, e.g. from getDocs(),
   # get the information about the individual worksheets.
   #
-function(doc, con = getGoogleDocsConnection(service = "wise"))
+function(doc, con = getGoogleDocsConnection(service = "wise"),
+          stringsAsFactors = default.stringsAsFactors())
 {
   if(is(con, "GoogleDocsConnection")) {
      tmp.con = getGoogleDocsConnection(service = "wise", error = FALSE)
@@ -70,11 +71,11 @@ function(doc, con = getGoogleDocsConnection(service = "wise"))
   txt = getURL(getFeed(doc), curl = if(is.null(con)) getCurlHandle() else con ,
                 followlocation = TRUE)
 
-  processWorksheetFeed(txt, con)
+  processWorksheetFeed(txt, con, stringsAsFactors = stringsAsFactors)
 }
 
 processWorksheetFeed =
-function(txt, con = NULL)
+function(txt, con = NULL, stringsAsFactors = getOption("stringsAsFactors", TRUE))
 {
   doc = xmlParse(txt, asText = TRUE)  
   entries = getNodeSet(doc, "//x:entry", "x")
@@ -135,10 +136,11 @@ sheetAsMatrix =
   #  Add a data.frame target so that we compute the types of each column.
   #
   #
-function(sheet, header = FALSE, as.data.frame = TRUE, trim = TRUE, con = sheet@connection, doc = xmlParse(getCells(sheet, con = con)))
+function(sheet, header = FALSE, as.data.frame = TRUE, trim = TRUE, con = sheet@connection, doc = xmlParse(getCells(sheet, con = con)),
+          stringsAsFactors = default.stringsAsFactors())
 {
 #  processCells(doc, sheet@dims, header, as.data.frame, trim)
-  processCells2(doc, trim, header, as.data.frame) 
+  processCells2(doc, trim, header, as.data.frame, stringsAsFactors = stringsAsFactors) 
 }
 
 setAs("GoogleWorksheetRef", "matrix", function(from) sheetAsMatrix(from, as.data.frame = FALSE))

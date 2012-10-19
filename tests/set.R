@@ -11,7 +11,7 @@ book = addSpreadsheet(con, c(21, 12), "dummy")
 sheets.con = getGoogleDocsConnection(names(GoogleDocsPassword), GoogleDocsPassword, "wise")
 docs = getDocs(sheets.con)
 
-sh = addWorksheet(docs$dummy, sheets.con, title = "testing")
+sh = addWorksheet(docs$dummy1, sheets.con, title = "testing")
 
 sh[1, 3] = "testing"
 

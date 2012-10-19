@@ -339,9 +339,9 @@ function(doc,  curl = getConnection(auth), auth, ...)
 {
     # if doc gives the URI, go. Otherwise use getDocEntryByName
   if(is.character(doc) && !inherits(doc, "AsIs") &&
-       substring(doc, 1, nchar(DocContentPrefix)) != DocContentPrefix) {
+       substring(doc, 1, nchar(DocContentPrefix)) != DocContentPrefix) 
      doc = getDocEntryByName(doc, curl)
-  }
+
 
   if(length(doc) == 0)
     stop("no document")

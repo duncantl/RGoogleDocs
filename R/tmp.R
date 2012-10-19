@@ -1,5 +1,5 @@
 processCells2 =
-function(doc, trim = TRUE, header = FALSE, as.data.frame = FALSE)
+function(doc, trim = TRUE, header = FALSE, as.data.frame = FALSE, stringsAsFactors = default.stringsAsFactors())
 {  
   cl = getNodeSet(doc, "//a:entry/gs:cell", c(a = "http://www.w3.org/2005/Atom",
                                             gs="http://schemas.google.com/spreadsheets/2006"))
@@ -29,7 +29,7 @@ function(doc, trim = TRUE, header = FALSE, as.data.frame = FALSE)
          list(ans = ans, types = types)
   
   ans = setHeader(x$ans, x$types, header)
-  fixColumnTypes(ans$ans, ans$types, as.data.frame)
+  fixColumnTypes(ans$ans, ans$types, as.data.frame, stringsAsFactors = stringsAsFactors)
 }
 
 trimRowCol =
@@ -65,7 +65,7 @@ function(ans, types, header)
 }
 
 fixColumnTypes =
-function(ans, types, as.data.frame = TRUE)
+function(ans, types, as.data.frame = TRUE, stringsAsFactors = default.stringsAsFactors())
 {
   if(as.data.frame) {
     structure(as.data.frame(
@@ -77,7 +77,7 @@ function(ans, types, as.data.frame = TRUE)
                    as(ans[,i], tp)
                 else
                    ans[,i]
-              })), names = colnames(ans))
+              }), stringsAsFactors = stringsAsFactors), names = colnames(ans))
   } else {
     tp = unique(types[!is.na(types)])
     if(length(tp) == 1)

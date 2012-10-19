@@ -1,3 +1,8 @@
+Version 0.7-0
+
+  *   Added stringsAsFactors parameter to getWorksheets() and sheetAsMatrix().
+      Suggested by Farrel Buchinsky.
+
 Version 0.6-0
   
   *   Clearer error message if uploadDoc() fails at the server end.

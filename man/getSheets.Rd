@@ -15,10 +15,12 @@
   \code{as(sheetRef, "data.frame")}.
 }
 \usage{
-getWorksheets(doc, con)
+getWorksheets(doc, con = getGoogleDocsConnection(service = "wise"),
+                stringsAsFactors = default.stringsAsFactors())
 sheetAsMatrix(sheet, header = FALSE, as.data.frame = TRUE, 
                trim = TRUE, con = sheet@connection,
-                doc = xmlParse(getCells(sheet, con = con))) 
+                doc = xmlParse(getCells(sheet, con = con)),
+                 stringsAsFactors = default.stringsAsFactors()) 
 }
 \arguments{
   \item{doc}{the name of the spreadsheet document or a  \code{GoogleDocument} object 
@@ -47,6 +49,9 @@ sheetAsMatrix(sheet, header = FALSE, as.data.frame = TRUE,
        The algorithm for converting the cells to a table could be more intelligent about this 
        and explicitly determine the rows and columns which have no
        values, not which contain \code{NA}s.}
+  \item{stringsAsFactors}{a logical indicating whether to convert string
+ variables to factors (\code{TRUE}), or leave as  \code{character}
+ vectors (\code{FALSE}).}
 }
 \value{
  A list of the \code{GoogleWorksheetRef} objects.
