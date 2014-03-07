@@ -18,4 +18,3 @@ Depends: methods
 Imports: RCurl, XML
 Author: Duncan Temple Lang
 Maintainer: Duncan Temple Lang <duncan@r-project.org>
-
