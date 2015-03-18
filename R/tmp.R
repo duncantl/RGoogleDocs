@@ -42,22 +42,23 @@ function(ans, types = NULL, index = FALSE)
     return(list(row = i, col = j))
 
   if(is.null(types))
-    return(ans[i,][,j])
+    return(ans[i, , drop = FALSE][,j])
 
-  return(list(ans = ans[i,][,j],
-              types = types[i,][,j]))
+  return(list(ans = ans[i,, drop = FALSE][,j, drop = FALSE],
+              types = types[i,, drop = FALSE][,j, drop = FALSE]))
 }
 
 
 setHeader =
 function(ans, types, header)
-{  
+{
+
   if(is.character(header))
     colnames(ans) = header
   else if(is.logical(header) && header) {
     colnames(ans) = ans[1,]
     types = types[-1,]
-    ans = ans[-1,]
+    ans = ans[-1,, drop = FALSE]
   } else
     colnames(ans) = paste("V", seq(length = ncol(ans)), sep = "")  
 

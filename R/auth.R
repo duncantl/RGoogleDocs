@@ -66,7 +66,8 @@ function(con)
 
 
 getGoogleAuth =
-function(login = getOption("GoogleDocsPassword"), password, service = "writely", appID = "R-GoogleDocs-0.1", error = TRUE)
+function(login = getOption("GoogleDocsPassword"), password, service = "writely", appID = "R-GoogleDocs-0.1", error = TRUE,
+          ..., curl = getCurlHandle(...))
 {
   if(!missing(login) && missing(password) && length(names(login)) > 0 ) {
     password = login
@@ -103,7 +104,7 @@ function(login = getOption("GoogleDocsPassword"), password, service = "writely",
 	         Passwd = password,
 	         service = service,
 	         source = appID,
-	        .opts = list(ssl.verifypeer = FALSE))
+	        .opts = list(ssl.verifypeer = FALSE), curl = curl)
    ans = parseAuth(ans)["Auth"]
 
    if(is.na(ans))
@@ -151,9 +152,7 @@ function(..., auth = NA, error = TRUE)
     }
   }
 
-  
   h = getCurlHandle(.opts = curlOpts(auth))
-
 
   k = if(!is.null(attr(auth, "service")))
          GoogleServiceClasses[attr(auth, "service")]
