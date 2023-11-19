@@ -499,7 +499,7 @@ moveToFolder(f$bar, f$foo)
 </para>
 <para>
 We can change meta data, such as the title, of the document.
-This is done via the operators <r:op>$*&lt;-</r:op> and <r:op>[&lt;-</r:op>.
+This is done via the operators <r:op>$&lt;-</r:op> and <r:op>[&lt;-</r:op>.
 (The accessor methods are not supported.)
 Given a document <r:var>doc</r:var> we set, e.g., the title with
 <r:code>
